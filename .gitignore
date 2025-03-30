@@ -1,0 +1,28 @@
+# Arquivos de build
+/target
+**/*.rs.bk
+
+# Arquivos do editor
+.idea/
+.vscode/
+*.swp
+
+# Logs, backups, etc.
+*.log
+*.tmp
+*.bak
+*.old
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# Python (para futuro neotui-py)
+/__pycache__/
+/*.py[cod]
+*.so
+*.egg-info/
+dist/
+build/
+.env
+.venv
