@@ -1,5 +1,6 @@
 use crate::event::Event;
 
+#[derive(Debug)]
 pub enum EventResult {
     Consumed,
     Ignored,
