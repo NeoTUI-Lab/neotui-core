@@ -72,6 +72,10 @@ impl Renderer {
     pub fn area(&self) -> Rect {
         self.buffer.area()
     }
+
+    pub fn buffer_mut(&mut self) -> &mut ScreenBuffer {
+        &mut self.buffer
+    }
 }
 
 #[cfg(test)]

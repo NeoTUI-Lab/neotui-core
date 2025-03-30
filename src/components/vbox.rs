@@ -1,6 +1,6 @@
 use crate::component::{Component, EventResult};
 use crate::event::Event;
-use crate::layout::Rect;
+use crate::layout::Rect as _;
 
 /// Um componente que empilha seus filhos verticalmente.
 pub struct VBox {
@@ -24,13 +24,11 @@ impl VBox {
 }
 
 impl Component for VBox {
-    fn render(&self) {
-        let root_area = Rect::new(0, 0, 80, 24); // área de exemplo (fixa por enquanto)
-        let areas = root_area.split_vertically(self.children.len());
-
-        for (child, area) in self.children.iter().zip(areas.iter()) {
-            println!("--- Rendering child at {:?}", area);
-            child.render();
+    fn render(&self, buffer: &mut crate::renderer::ScreenBuffer, area: crate::layout::Rect) {
+        let regions = area.split_vertically(self.children.len());
+    
+        for (child, region) in self.children.iter().zip(regions.iter()) {
+            child.render(buffer, *region);
         }
     }
 

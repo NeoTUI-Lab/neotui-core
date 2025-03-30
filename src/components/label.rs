@@ -14,8 +14,8 @@ impl Label {
 }
 
 impl Component for Label {
-    fn render(&self) {
-        println!("{}", self.text);
+    fn render(&self, buffer: &mut crate::renderer::ScreenBuffer, area: crate::layout::Rect) {
+        buffer.draw_text(area.x, area.y, &self.text);
     }
 
     fn on_event(&mut self, _event: Event) -> EventResult {
