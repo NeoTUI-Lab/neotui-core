@@ -23,4 +23,15 @@ fn main() {
 
     let result = vbox.on_event(Event::Special(SpecialKey::Enter));
     println!("\nEvent result: {:?}", result);
+
+    println!("\n[Tab]");
+    let _ = vbox.on_event(Event::Special(SpecialKey::Tab));
+    renderer.clear();
+    vbox.render(renderer.buffer_mut(), area);
+    renderer.flush();
+
+    println!("\n[Enter]");
+    let result = vbox.on_event(Event::Special(SpecialKey::Enter));
+    println!("Event result: {:?}", result);
+
 }

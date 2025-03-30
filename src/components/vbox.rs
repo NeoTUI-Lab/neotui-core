@@ -2,20 +2,63 @@ use crate::component::{Component, EventResult};
 use crate::event::Event;
 use crate::layout::Rect as _;
 
-/// Um componente que empilha seus filhos verticalmente.
 pub struct VBox {
     pub children: Vec<Box<dyn Component>>,
+    pub focused_index: usize,
 }
 
 impl VBox {
     pub fn new() -> Self {
         Self {
             children: Vec::new(),
+            focused_index: 0,
         }
     }
 
     pub fn with_children(children: Vec<Box<dyn Component>>) -> Self {
-        Self { children }
+        let mut vbox = Self {
+            focused_index: 0,
+            children,
+        };
+
+        vbox.focus_first();
+        vbox
+    }
+
+    pub fn focus_first(&mut self) {
+        for (i, child) in self.children.iter_mut().enumerate() {
+            if child.is_focusable() {
+                child.focus();
+                self.focused_index = i;
+                break;
+            }
+        }
+    }
+
+    pub fn next_focus(&mut self) {
+        let len = self.children.len();
+        for i in 1..=len {
+            let idx = (self.focused_index + i) % len;
+            if self.children[idx].is_focusable() {
+                self.children[self.focused_index].blur();
+                self.children[idx].focus();
+                self.focused_index = idx;
+                break;
+            }
+        }
+    }
+
+    pub fn prev_focus(&mut self) {
+        let len = self.children.len();
+        for i in 1..=len {
+            let idx = (self.focused_index + len - i) % len;
+            if self.children[idx].is_focusable() {
+                self.children[self.focused_index].blur();
+                self.children[idx].focus();
+                self.focused_index = idx;
+                break;
+            }
+        }
     }
 
     pub fn add_child(&mut self, child: Box<dyn Component>) {

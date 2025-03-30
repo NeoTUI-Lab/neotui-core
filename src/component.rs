@@ -10,6 +10,11 @@ pub enum EventResult {
 pub trait Component {
     fn render(&self, buffer: &mut crate::renderer::ScreenBuffer, area: crate::layout::Rect);
     fn on_event(&mut self, event: Event) -> EventResult;
+    fn focus(&mut self) {} 
+    fn blur(&mut self) {}  
+    fn is_focusable(&self) -> bool {
+        false
+    }
 }
 
 

@@ -43,9 +43,35 @@ impl ScreenBuffer {
     pub fn area(&self) -> Rect {
         Rect::new(0, 0, self.width, self.height)
     }
+
+    pub fn draw_border(&mut self, area: Rect) {
+        let x = area.x as usize;
+        let y = area.y as usize;
+        let w = area.width as usize;
+        let h = area.height as usize;
+    
+        if w < 2 || h < 2 || y + h > self.height as usize || x + w > self.width as usize {
+            return; // área pequena demais ou fora do buffer
+        }
+    
+        let (right, bottom) = (x + w - 1, y + h - 1);
+    
+        self.cells[y][x] = '┌';
+        self.cells[y][right] = '┐';
+        self.cells[bottom][x] = '└';
+        self.cells[bottom][right] = '┘';
+    
+        for i in x + 1..right {
+            self.cells[y][i] = '─';
+            self.cells[bottom][i] = '─';
+        }
+        for j in y + 1..bottom {
+            self.cells[j][x] = '│';
+            self.cells[j][right] = '│';
+        }
+    }    
 }
 
-// Renderer struct that owns a ScreenBuffer and exposes high-level render logic
 pub struct Renderer {
     buffer: ScreenBuffer,
 }

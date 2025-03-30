@@ -5,6 +5,7 @@ use crate::renderer::ScreenBuffer;
 
 pub struct Button {
     pub label: String,
+    pub focused: bool,
     pub on_click: Option<Box<dyn FnMut()>>,
 }
 
@@ -12,6 +13,7 @@ impl Button {
     pub fn new<T: Into<String>>(label: T) -> Self {
         Self {
             label: label.into(),
+            focused: false,
             on_click: None,
         }
     }
@@ -24,9 +26,17 @@ impl Button {
 
 impl Component for Button {
     fn render(&self, buffer: &mut ScreenBuffer, area: Rect) {
-        let x = area.x + (area.width.saturating_sub(self.label.len() as u16)) / 2;
+        buffer.draw_border(area);
+    
+        let label = if self.focused {
+            format!("> {}", self.label)
+        } else {
+            self.label.clone()
+        };
+    
+        let x = area.x + (area.width.saturating_sub(label.len() as u16)) / 2;
         let y = area.y + area.height / 2;
-        buffer.draw_text(x, y, &self.label);
+        buffer.draw_text(x, y, &label);
     }
 
     fn on_event(&mut self, event: Event) -> EventResult {
@@ -39,6 +49,18 @@ impl Component for Button {
             }
             _ => EventResult::Ignored,
         }
+    }
+
+    fn focus(&mut self) {
+        self.focused = true;
+    }
+
+    fn blur(&mut self) {
+        self.focused = false;
+    }
+
+    fn is_focusable(&self) -> bool {
+        true
     }
 }
 
