@@ -1,12 +1,13 @@
 use crate::component::{Component, EventResult};
 use crate::event::{Event, SpecialKey};
 use crate::layout::Rect;
-use crate::renderer::ScreenBuffer;
+use crate::renderer::{ScreenBuffer, BorderStyle};
 
 pub struct Button {
     pub label: String,
     pub focused: bool,
     pub on_click: Option<Box<dyn FnMut()>>,
+    pub style: BorderStyle,
 }
 
 impl Button {
@@ -15,6 +16,7 @@ impl Button {
             label: label.into(),
             focused: false,
             on_click: None,
+            style: BorderStyle::Plain,
         }
     }
 
@@ -22,18 +24,23 @@ impl Button {
         self.on_click = Some(Box::new(callback));
         self
     }
+
+    pub fn with_style(mut self, style: BorderStyle) -> Self {
+        self.style = style;
+        self
+    }
 }
 
 impl Component for Button {
     fn render(&self, buffer: &mut ScreenBuffer, area: Rect) {
-        buffer.draw_border(area);
-    
+        buffer.draw_border(area, self.style);
+
         let label = if self.focused {
             format!("> {}", self.label)
         } else {
             self.label.clone()
         };
-    
+
         let x = area.x + (area.width.saturating_sub(label.len() as u16)) / 2;
         let y = area.y + area.height / 2;
         buffer.draw_text(x, y, &label);
@@ -72,9 +79,9 @@ mod tests {
     #[test]
     fn test_button_triggers_on_click() {
         let mut triggered = false;
-        let mut button = Button::new("Click me")
+        let mut button = Button::new("Test")
             .on_click(|| {
-                println!("Button pressed!");
+                println!("Clicked!");
                 triggered = true;
             });
 

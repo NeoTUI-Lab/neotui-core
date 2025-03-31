@@ -7,6 +7,13 @@ pub struct ScreenBuffer {
     pub cells: Vec<Vec<char>>,
 }
 
+#[derive(Debug, Clone, Copy)]
+pub enum BorderStyle {
+    Plain,
+    Double,
+    Rounded,
+}
+
 impl ScreenBuffer {
     pub fn new(width: u16, height: u16) -> Self {
         let cells = vec![vec![' '; width as usize]; height as usize];
@@ -44,33 +51,44 @@ impl ScreenBuffer {
         Rect::new(0, 0, self.width, self.height)
     }
 
-    pub fn draw_border(&mut self, area: Rect) {
+    pub fn draw_border(&mut self, area: Rect, style: BorderStyle) {
         let x = area.x as usize;
         let y = area.y as usize;
         let w = area.width as usize;
         let h = area.height as usize;
-    
+
+        // Check for area validity
         if w < 2 || h < 2 || y + h > self.height as usize || x + w > self.width as usize {
-            return; // área pequena demais ou fora do buffer
+            return;
         }
-    
+
         let (right, bottom) = (x + w - 1, y + h - 1);
-    
-        self.cells[y][x] = '┌';
-        self.cells[y][right] = '┐';
-        self.cells[bottom][x] = '└';
-        self.cells[bottom][right] = '┘';
-    
+
+        // Select border characters based on style
+        let (tl, tr, bl, br, hline, vline) = match style {
+            BorderStyle::Plain => ('┌', '┐', '└', '┘', '─', '│'),
+            BorderStyle::Double => ('╔', '╗', '╚', '╝', '═', '║'),
+            BorderStyle::Rounded => ('╭', '╮', '╰', '╯', '─', '│'),
+        };
+
+        // Draw corners
+        self.cells[y][x] = tl;
+        self.cells[y][right] = tr;
+        self.cells[bottom][x] = bl;
+        self.cells[bottom][right] = br;
+
+        // Draw horizontal lines
         for i in x + 1..right {
-            self.cells[y][i] = '─';
-            self.cells[bottom][i] = '─';
+            self.cells[y][i] = hline;
+            self.cells[bottom][i] = hline;
         }
+
+        // Draw vertical lines
         for j in y + 1..bottom {
-            self.cells[j][x] = '│';
-            self.cells[j][right] = '│';
+            self.cells[j][x] = vline;
+            self.cells[j][right] = vline;
         }
-    }    
-}
+    }}
 
 pub struct Renderer {
     buffer: ScreenBuffer,

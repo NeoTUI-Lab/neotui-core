@@ -1,6 +1,5 @@
 use crate::component::{Component, EventResult};
 use crate::event::Event;
-use crate::layout::Rect as _;
 
 pub struct VBox {
     pub children: Vec<Box<dyn Component>>,
